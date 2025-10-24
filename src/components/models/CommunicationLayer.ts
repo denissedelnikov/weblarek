@@ -19,7 +19,7 @@ export class CommunicationLayer {
    * @returns {Promise<getServerIProduct>} = Массив товаров с сервера
    */
   async fetchProducts(): Promise<getServerIProduct> {
-    return await this.api.get<getServerIProduct>("/product/");
+      return await this.api.get<getServerIProduct>("/product/")
   }
 
   /**

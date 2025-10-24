@@ -1,4 +1,6 @@
 import { IProduct } from "../../types";
+import { EventEmitter } from "../base/Events";
+
 
 export class Product {
   /** Класс для того чтобы хранить или получать информацию о товарах в каталоге и для модального окна подробного осмотра. */
@@ -6,16 +8,22 @@ export class Product {
   private AllProduct: IProduct[] = [];
   /** @type {IProduct} setProductDisplay - Поле храения товара (обекта:IProduct) для подробного просмотра или ничего  */
   private setProductDisplay: IProduct | undefined;
+  emiter
 
+ constructor(_emiter: EventEmitter) {
+  this.emiter = _emiter
+}
   /**
    * Сохраняет переданный массив обьектов:IProduct в поле AllProduct
    * @param {IProduct[]} arrayProduct — Массив обьектов
    */
   setProduct(arrayProduct: IProduct[]): void {
     this.AllProduct = arrayProduct;
+    this.emiter.emit('create_cards_catalog', this.AllProduct)
   }
-  /**
-   * Вернет массив обьектов:IProduct из поля AllProduct
+
+  /**s
+   * Вернет массив обьектов:IProduct из поля AllProductyy
    * @returns {IProduct[]} AllProduct — Массив всех товаров
    */
   getProduct(): IProduct[] {
@@ -38,6 +46,7 @@ export class Product {
    */
   setProductForDisplay(IProductDisplay: IProduct): void {
     this.setProductDisplay = IProductDisplay;
+    this.emiter.emit('card_preview', this.setProductDisplay)
   }
 
   /**

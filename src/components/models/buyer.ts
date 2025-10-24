@@ -1,8 +1,9 @@
 import { IBuyer, TPpayment } from "../../types";
+import { EventEmitter } from "../base/Events";
 
 export class Buyer {
   /** ККласс для хранения данных которые необходимо ввести пользователю при покупке*/
-
+  //** Обьект с данными не прошедшими валидацию*/
   /** Обьект с сохранеными данными пользователя*/
   buyerData: IBuyer = {
     payment: "",
@@ -11,15 +12,20 @@ export class Buyer {
     address: "",
   };
 
-  //** Обьект с данными не прошедшими валидацию*/
-  errors: { [key: string]: string } = {};
 
+
+  emmit: EventEmitter
+  
+  constructor(_emmit:EventEmitter) {
+    this.emmit = _emmit
+  }
   /**
    * Установить платежный метод
    * @param {string} payment - Строка с типом опалиы
    */
   setPayment(payment: TPpayment): void {
     this.buyerData.payment = payment;
+    this.emmit.emit('update_order',this.validate())
   }
 
   /**
@@ -28,6 +34,7 @@ export class Buyer {
    */
   setEmail(email: string): void {
     this.buyerData.email = email;
+   this.emmit.emit('update_contacts',this.validate())
   }
   /**
    * Сохранить телефон котрый указал пользователь в  поле класса
@@ -35,6 +42,7 @@ export class Buyer {
    */
   setPhone(phone: string): void {
     this.buyerData.phone = phone;
+    this.emmit.emit('update_contacts',this.validate())
   }
   /**
    * Сохранить адресс котрый ввел пользователь в  поле класса
@@ -42,6 +50,7 @@ export class Buyer {
    */
   setAddress(address: string): void {
     this.buyerData.address = address;
+    this.emmit.emit('update_order',this.validate())
   }
 
   /**
@@ -70,16 +79,11 @@ export class Buyer {
    * Валидация сохранных данных о пользователе в поле класса -  (buyerData: IBuyer).
    * @returns В случаи если все данные валидны вернется обьект {valid: true}, если в данных есть ошибка  вернтеся обьект  {valide: false, eror:[Имя поля с ошибкой]: тип ошибки }
    */
-  validate(): { valide: boolean; error?: { [key: string]: string } } {
-    for (const [key, value] of Object.entries(this.buyerData)) {
-      if (!value) {
-        this.errors[key] = `Поле - ${key} не заполнено`;
-      }
-    }
-
-    if (Object.keys(this.errors).length > 0)
-      return { valide: false, error: this.errors };
-
-    return { valide: true };
+  validate() {
+   return{ payment: this.buyerData.payment ? '': 'Необходимо выбрать способ оплаты',
+    email: this.buyerData.email ? '': 'Не заполнен email',
+    phone: this.buyerData.phone ? '': 'Не заполнен телефон',
+    address: this.buyerData.address ? '': 'Не заполнен адресс',
+   }
   }
 }
