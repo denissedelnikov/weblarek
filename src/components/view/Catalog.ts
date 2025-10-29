@@ -1,21 +1,35 @@
-import { ICard } from "../../main";
+import { ICard } from "./Card";
 import { Component } from "../base/Component";
 import { EventEmitter } from "../base/Events";
 
-
 export class Catalog extends Component<ICard> {
-  private gallary: HTMLElement
-  private emmiter: EventEmitter
+  /** 
+   * @type {HTMLElement} gallary -  Поле для хранения блока каталога 
+  */
+  private gallary: HTMLElement;
+  /**
+   *  @type {EventEmitter} emmit - Обработчик событий 
+  */
+  protected emmit: EventEmitter;
 
-  constructor(container: HTMLElement, _emmiter:EventEmitter){
-    super(container)
-    
-    this.emmiter =_emmiter
-    this.gallary = container
+
+  /**
+   * Конструктор класса Catalog
+   * @param {HTMLElement} container - Контейнер компонента.
+   * @param {EventEmitter} _emmit - Объект для событий.
+  */
+  constructor(container: HTMLElement, _emmit: EventEmitter) {
+    super(container);
+
+    this.emmit = _emmit;
+    this.gallary = container;
   }
 
+  /**
+   * Показать карточки товара
+   * @param {HTMLElement } cardsPrepared - Массив разметок всех товаров в кталоге 
+  */
   set renderCatalog(cardsPrepared: HTMLElement[]) {
-    this.gallary.append(...cardsPrepared)
+    this.gallary.append(...cardsPrepared);
   }
-
 }

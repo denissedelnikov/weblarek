@@ -1,9 +1,32 @@
-import js from "@eslint/js";
-import globals from "globals";
-import tseslint from "typescript-eslint";
-import { defineConfig } from "eslint/config";
-
-export default defineConfig([
-  { files: ["**/*.{js,mjs,cjs,ts,mts,cts}"], plugins: { js }, extends: ["js/recommended"], languageOptions: { globals: globals.browser } },
-  tseslint.configs.recommended,
-]);
+export default defineConfig(
+  {
+    // Конфигурация для JS
+    overrides: [
+      {
+        files: ["**/*.{js,mjs,cjs}"],
+        plugins: { js },
+        extends: ["js/recommended"],
+        languageOptions: {
+          globals: globals.browser,
+        },
+      },
+    ],
+  },
+  {
+    // Конфигурация для TS
+    overrides: [
+      {
+        files: ["**/*.{ts,mts,cts}"],
+        parser: "@typescript-eslint/parser",
+        plugins: {
+          "@typescript-eslint": require("@typescript-eslint/eslint-plugin"),
+        },
+        extends: ["plugin:@typescript-eslint/recommended"],
+        parserOptions: {
+          ecmaVersion: 2020,
+          sourceType: "module",
+        },
+      },
+    ],
+  }
+);

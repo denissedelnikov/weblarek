@@ -1,0 +1,404 @@
+import { Component } from "../base/Component";
+import { EventEmitter } from "../base/Events";
+import { ensureElement } from "../../utils/utils";
+
+/**
+ * Интерфейс для общего класса
+ */
+export interface ICard {
+  title: string;
+  price: string;
+  id: string;
+}
+
+/**
+ * Интерфейс для карточки товара в каталоге
+ */
+export interface ICardCatalog extends ICard {
+  category: string;
+  categorySelector:string;
+  image: string;
+}
+
+/**
+ * Интерфейс для карточки товара в окне подробного осмотра
+ */
+export interface ICarddPrview extends ICardCatalog, ICard {
+  description: string;
+  buttonText: string;
+  buttonStatus: boolean;
+}
+
+/**
+ * Интерфейс для карточки товара в корзине
+ */
+export interface ICardBasket extends ICard {
+  counter: string;
+}
+
+/**
+ * Обший класс карточек товара
+ * @class
+ * @param {Object} ICard - Данные карточки.
+ */
+export class Card extends Component<ICard> {
+  /**
+   * @protected {HTMLElement} elementTitle - HTML элемент заголовка.
+   */
+  protected elementTitle: HTMLElement;
+
+  /**
+   * @protected {HTMLElement} elementPrice - HTML элемент цены.
+   */
+  protected elementPrice: HTMLElement;
+
+  /**
+   * @param {HTMLElement} container - Родительский элемент.
+   */
+  constructor(container: HTMLElement) {
+    super(container);
+    /**
+     * Инициализация элементов.
+     */
+    this.elementTitle = ensureElement<HTMLElement>(
+      ".card__title",
+      this.container
+    );
+    this.elementPrice = ensureElement<HTMLElement>(
+      ".card__price",
+      this.container
+    );
+  }
+
+  /**
+   * Установка заголовка.
+   * @param {string} value
+   */
+  set title(value: string) {
+    this.elementTitle.textContent = value;
+  }
+
+  /**
+   * Установка цены.
+   * @param {string} value
+   */
+  set price(value: string) {
+    this.elementPrice.textContent = value;
+  }
+
+  /**
+   * Установка ID карточки.
+   * @param {string} value
+   */
+  set id(value: string) {
+    this.container.dataset.id = value;
+  }
+}
+
+/**
+ * Класс отображения карточек каталога
+ * @class
+ */
+export class CardCatalog extends Card {
+  /**
+   * @protected {HTMLElement} elementCategory - Элемент категории.
+   */
+  protected elementCategory: HTMLElement;
+
+  /**
+   * @protected {HTMLElement} elementButton - Элемент кнопки.
+   */
+  protected elementButton: HTMLElement;
+
+  /**
+   * @protected {HTMLImageElement} elementImage - Элемент изображения.
+   */
+  protected elementImage: HTMLImageElement;
+
+  /**
+   * @protected {EventEmitter} emmiter - Объект события.
+   */
+  protected emmiter: EventEmitter;
+
+  /**
+   * @param {HTMLElement} conteiner - Родительский элемент.
+   * @param {EventEmitter} _emmiter - Объект события.
+   */
+  constructor(conteiner: HTMLElement, _emmiter: EventEmitter) {
+    super(conteiner);
+    this.elementButton = conteiner;
+    this.emmiter = _emmiter;
+
+    this.elementCategory = ensureElement<HTMLElement>(
+      ".card__category",
+      this.container
+    );
+    this.elementImage = ensureElement<HTMLImageElement>(
+      ".card__image",
+      this.container
+    );
+  }
+
+  /**
+   * Установка категории.
+   * @param {string} value
+   */
+  set category(value: string) {
+    this.elementCategory.textContent = value;
+  }
+
+  /**
+   * Установка селектора категории.
+   * @param {string} value
+   */
+  set categorySelector (value: string) {
+    this.elementCategory.classList.add(value)
+  }
+
+  /**
+   * Переопределение установки заголовка.
+   * @param {string} value
+   */
+  set title(value: string) {
+    super.title = value;
+  }
+
+  /**
+   * Установка изображения.
+   * @param {string} value
+   */
+  set image(value: string) {
+    super.setImage(this.elementImage, value);
+  }
+
+  /**
+   * Установка цены.
+   * @param {string} value
+   */
+  set price(value: string) {
+    super.price = value;
+  }
+
+  /**
+   * Отрисовка карточки и добавление обработчика клика.
+   * @param {Partial<ICard>} [data]
+   * @returns {HTMLElement}
+   */
+  render(data?: Partial<ICard>): HTMLElement {
+    const element = super.render(data);
+    element.addEventListener("click", () => {
+      this.emmiter.emit("card_click", { id: data?.id });
+    });
+    return element;
+  }
+}
+
+/**
+ * Класс для отобраения элемента выбраного для подробного осмотра
+ * @class
+ */
+export class CardPreviw extends Card {
+  /**
+   * @public {HTMLElement} elementText - Элемент текста.
+   */
+  elementText: HTMLElement;
+
+  /**
+   * @public {HTMLElement} elementCategory - Элемент категории.
+   */
+  elementCategory: HTMLElement;
+
+  /**
+   * @protected {HTMLImageElement} elementImage - Элемент изображения.
+   */
+  protected elementImage: HTMLImageElement;
+
+  /**
+   * @public {HTMLButtonElement} elementButtonPreviw - Кнопка превью.
+   */
+  elementButtonPreviw: HTMLButtonElement;
+
+  /**
+   * @protected {EventEmitter} emmiter - Объект события.
+   */
+  protected emmiter: EventEmitter;
+
+  /**
+   * @param {HTMLElement} container - Родительский элемент.
+   * @param {EventEmitter} _emmiter - Объект события.
+   */
+  constructor(container: HTMLElement, _emmiter: EventEmitter) {
+    super(container);
+    this.emmiter = _emmiter;
+    this.elementButtonPreviw = ensureElement<HTMLButtonElement>(
+      ".card__button",
+      this.container
+    );
+    this.elementText = ensureElement<HTMLElement>(
+      ".card__text",
+      this.container
+    );
+    this.elementCategory = ensureElement<HTMLElement>(
+      ".card__category",
+      this.container
+    );
+    this.elementImage = ensureElement<HTMLImageElement>(
+      ".card__image",
+      this.container
+    );
+
+    this.elementButtonPreviw.addEventListener("click", (e) => {
+      this.emmiter.emit("click_button_previw", e);
+    });
+  }
+
+  /**
+   * Установка категории.
+   * @param {string} value
+   */
+  set category(value: string) {
+    this.elementCategory.textContent = value;
+  }
+
+  /**
+   * Установка заголовка.
+   * @param {string} value
+   */
+  set title(value: string) {
+    super.title = value;
+  }
+
+  /**
+   * Установка изображения.
+   * @param {string} value
+   */
+  set image(value: string) {
+    super.setImage(this.elementImage, value);
+  }
+
+  /**
+   * Установка цены.
+   * @param {string} value
+   */
+  set price(value: string) {
+    super.price = value;
+  }
+
+  /**
+   * Установка описания.
+   * @param {string} value
+   */
+  set description(value: string) {
+    this.elementText.textContent = value;
+  }
+
+  /**
+   * Установка текста кнопки.
+   * @param {string} value
+   */
+  set buttonText(value: string) {
+    this.elementButtonPreviw.textContent = value;
+  }
+
+  /**
+   * Установка статуса кнопки.
+   * @param {boolean} value
+   */
+  set buttonStatus(value: boolean) {
+    this.elementButtonPreviw.disabled = value;
+  }
+
+  /**
+   * Отображение кард-превью.
+   * @param {Partial<ICarddPrview>} [data]
+   * @returns {HTMLElement}
+   */
+  render(data?: Partial<ICarddPrview>): HTMLElement {
+    if (!data) return this.container;
+    const cardPreviewRender = super.render(data);
+    this.emmiter.emit("modal_content_render", cardPreviewRender);
+    return cardPreviewRender;
+  }
+}
+/**
+ * Класс карточки в корзине
+ * @class
+ */
+export class CardBasket extends Card {
+  /**
+   * @public {HTMLElement} counterBasket - Элемент счетчика.
+   */
+  counterBasket: HTMLElement;
+
+  /**
+   * @public {HTMLElement} elementDeleteButton - Элемент кнопки удаления.
+   */
+  elementDeleteButton: HTMLElement;
+
+  /**
+   * @public {EventEmitter} emmit - Объект события.
+   */
+  emmit: EventEmitter;
+
+  /**
+   * @param {HTMLElement} container - Родительский элемент.
+   * @param {EventEmitter} _emmit - Объект события.
+   */
+  constructor(container: HTMLElement, _emmit: EventEmitter) {
+    super(container);
+    this.emmit = _emmit;
+    this.counterBasket = ensureElement<HTMLElement>(
+      ".basket__item-index",
+      this.container
+    );
+    this.elementDeleteButton = ensureElement<HTMLElement>(
+      ".basket__item-delete",
+      this.container
+    );
+
+    this.elementDeleteButton.addEventListener("click", (e: Event) => {
+      this.emmit.emit("card_delete_basket", e);
+    });
+  }
+
+  /**
+   * Установка ID.
+   * @param {string} value
+   */
+  set id(value: string) {
+    super.id = value;
+  }
+
+  /**
+   * Установка цены.
+   * @param {string} value
+   */
+  set price(value: string) {
+    super.price = value;
+  }
+
+  /**
+   * Установка заголовка.
+   * @param {string} value
+   */
+  set title(value: string) {
+    super.title = value;
+  }
+
+  /**
+   * Установка количества.
+   * @param {string} value
+   */
+  set counter(value: string) {
+    this.counterBasket.textContent = value;
+  }
+
+  /**
+   * Отрисовка карточки корзины.
+   * @param {Partial<ICardBasket>} [data]
+   * @returns {HTMLElement}
+   */
+  render(data?: Partial<ICardBasket>): HTMLElement {
+    return super.render(data);
+  }
+}

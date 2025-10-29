@@ -1,15 +1,15 @@
 import { IProduct } from "../../types";
 import { EventEmitter } from "../base/Events";
-import { Product } from "./product";
 
 export class Basket {
   /** Класс для хранения информации о товарах находяхся в корзине  т.е выбраных пользователем для покупки
   /** @type {IProduct[]}  basketProduct - Массив товаров нахояшихся в корзине */
   private basketProduct: IProduct[] = [];
-  protected emmiter: EventEmitter;
+  // EventEmmiter
+  private emmit: EventEmitter;
 
-  constructor(_emmiter: EventEmitter) {
-    this.emmiter = _emmiter;
+  constructor(_emmit: EventEmitter) {
+    this.emmit = _emmit;
   }
   /**
    * Метод для добовления товара в массив корзины basketProduct
@@ -17,7 +17,7 @@ export class Basket {
    */
   addProduct(product: IProduct): void {
     this.basketProduct.push(product);
-    this.emmiter.emit("basket_counter");
+    this.emmit.emit("basket_counter");
   }
 
   /**
@@ -33,7 +33,7 @@ export class Basket {
    */
   clear(): void {
     this.basketProduct = [];
-     this.emmiter.emit("basket_counter")
+    this.emmit.emit("basket_counter");
   }
 
   /**
@@ -50,7 +50,7 @@ export class Basket {
       return acc; // если цена отсутствует, просто оставляем сумму без изменений
     }, 0);
 
-    return total 
+    return total;
   }
 
   /**
@@ -78,6 +78,6 @@ export class Basket {
     this.basketProduct = this.basketProduct.filter(
       (element) => element.id != product.id
     );
-    this.emmiter.emit("basket_counter");
+    this.emmit.emit("basket_counter");
   }
 }

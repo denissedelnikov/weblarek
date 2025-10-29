@@ -2,46 +2,89 @@ import { Component } from "../base/Component";
 import { ensureElement } from "../../utils/utils";
 import { EventEmitter } from "../base/Events";
 
-export interface  IBasketModal {
-  list:HTMLElement[]
-  buttonStatus: boolean
-  priceCounter: string
+export interface IBasketModal {
+  list: HTMLElement[];
+  buttonStatus: boolean;
+  priceCounter: string;
 }
 
 export class BasketModal extends Component<IBasketModal> {
-  elementButton: HTMLButtonElement;
-  elementPriceCounter: HTMLSpanElement;
-  elementBasketList: HTMLElement;
-  emmit: EventEmitter
+  /**
+   * Класс для отображения элементов находяшихся в корзине
+   */
 
-  constructor(container: HTMLElement,_emmit:EventEmitter) {
+  /**
+   * @type {HTMLButtonElement} elementButton - Кнопка перехода к оформлению заказа
+   */
+  private elementButton: HTMLButtonElement;
+  /**
+   * @type {HTMLSpanElement} elementPriceCounter - Поле для хранения общей стоимости всех предметов в корзине
+   */
+  private elementPriceCounter: HTMLSpanElement;
+  /** @type {HTMLElement} elementBasketList - Поле для отображения карточек товара */
+  private elementBasketList: HTMLElement;
+  //EventEmitter
+  private emmit: EventEmitter;
+
+
+  /**
+   * @param {HTMLElement} container - Родительский элемент.
+   * @param {EventEmitter} _emmit - Обработчик событий
+   */
+  constructor(container: HTMLElement, _emmit: EventEmitter) {
     super(container);
 
-    this.emmit = _emmit
-    this.elementButton = ensureElement<HTMLButtonElement>('.basket__button', this.container);
-    this.elementPriceCounter = ensureElement<HTMLSpanElement>('.basket__price', this.container);
-    this.elementBasketList = ensureElement<HTMLElement>('.basket__list', this.container);
+    this.emmit = _emmit;
 
-    this.elementButton.addEventListener('click', () => {
-      this.emmit.emit('click_basket_buy')
-    })
+  /**     
+    * Поиск элементов кнопки корзины,  
+    * Поле для отрисовки суммы товаров в корзине,
+    * Поле для вставки карточек
+    */
+    this.elementButton = ensureElement<HTMLButtonElement>(
+      ".basket__button",
+      this.container
+    );
+    this.elementPriceCounter = ensureElement<HTMLSpanElement>(
+      ".basket__price",
+      this.container
+    );
+    this.elementBasketList = ensureElement<HTMLElement>(
+      ".basket__list",
+      this.container
+    );
+
+  /**     
+    * Ожидание клика по кнопке перехода к оформлению заказа
+    */
+    this.elementButton.addEventListener("click", () => {
+      this.emmit.emit("click_basket_buy");
+    });
   }
 
-
+  /** 
+   * Сделать доступной или недоступной кнопку 
+     @param  {boolean} value - tru - Отключить | false - Включить    * 
+  */
   set buttonStatus(value: boolean) {
     this.elementButton.disabled = value;
   }
 
+  /** 
+   * Расчитать общую стоимость всех предметов в корзине
+   * @param  {string} value - tru - Отключить | false - Включить
+  */
   set priceCounter(value: string) {
     this.elementPriceCounter.textContent = value;
   }
 
+  /**
+   * Метод для вставки карточек
+   * @param  {HTMLElement[]} value - Отрендереные карточки товара находяшиесь в корзине или пусто
+  */
   set list(value: HTMLElement[]) {
-    this.elementBasketList.innerHTML = ''
+    this.elementBasketList.innerHTML = value.length > 0 ? '' : 'Корзина пуста';
     this.elementBasketList.append(...value);
   }
-  render(data?: Partial<IBasketModal> | undefined): HTMLElement {
-    if(!data) return this.container
-    return super.render(data)
-  }
+
 }

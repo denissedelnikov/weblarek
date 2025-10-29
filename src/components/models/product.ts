@@ -8,10 +8,11 @@ export class Product {
   private AllProduct: IProduct[] = [];
   /** @type {IProduct} setProductDisplay - Поле храения товара (обекта:IProduct) для подробного просмотра или ничего  */
   private setProductDisplay: IProduct | undefined;
-  emiter
+   // EventEmmiter
+  private emmit:EventEmitter
 
- constructor(_emiter: EventEmitter) {
-  this.emiter = _emiter
+ constructor(_emmit: EventEmitter) {
+  this.emmit = _emmit
 }
   /**
    * Сохраняет переданный массив обьектов:IProduct в поле AllProduct
@@ -19,10 +20,10 @@ export class Product {
    */
   setProduct(arrayProduct: IProduct[]): void {
     this.AllProduct = arrayProduct;
-    this.emiter.emit('create_cards_catalog', this.AllProduct)
+    this.emmit.emit('create_cards_catalog', this.AllProduct)
   }
 
-  /**s
+  /**
    * Вернет массив обьектов:IProduct из поля AllProductyy
    * @returns {IProduct[]} AllProduct — Массив всех товаров
    */
@@ -46,7 +47,7 @@ export class Product {
    */
   setProductForDisplay(IProductDisplay: IProduct): void {
     this.setProductDisplay = IProductDisplay;
-    this.emiter.emit('card_preview', this.setProductDisplay)
+    this.emmit.emit('card_preview', this.setProductDisplay)
   }
 
   /**

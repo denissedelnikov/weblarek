@@ -32,5 +32,6 @@ export type getServerIProduct = {
 };
 
 export interface postServerIBuyer extends IBuyer {
-  items: IProduct[];
+  total:number,
+  items: IProduct["id"][];
 }

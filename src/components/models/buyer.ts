@@ -2,22 +2,20 @@ import { IBuyer, TPpayment } from "../../types";
 import { EventEmitter } from "../base/Events";
 
 export class Buyer {
-  /** ККласс для хранения данных которые необходимо ввести пользователю при покупке*/
-  //** Обьект с данными не прошедшими валидацию*/
+  /** Класс для хранения данных которые необходимо ввести пользователю при покупке*/
   /** Обьект с сохранеными данными пользователя*/
-  buyerData: IBuyer = {
+  private buyerData: IBuyer = {
     payment: "",
     email: "",
     phone: "",
     address: "",
   };
 
+  // EventEmmiter
+  private emmit: EventEmitter;
 
-
-  emmit: EventEmitter
-  
-  constructor(_emmit:EventEmitter) {
-    this.emmit = _emmit
+  constructor(_emmit: EventEmitter) {
+    this.emmit = _emmit;
   }
   /**
    * Установить платежный метод
@@ -25,7 +23,7 @@ export class Buyer {
    */
   setPayment(payment: TPpayment): void {
     this.buyerData.payment = payment;
-    this.emmit.emit('update_order',this.validate())
+    this.emmit.emit("update_order", this.validate());
   }
 
   /**
@@ -34,7 +32,7 @@ export class Buyer {
    */
   setEmail(email: string): void {
     this.buyerData.email = email;
-   this.emmit.emit('update_contacts',this.validate())
+    this.emmit.emit("update_contacts", this.validate());
   }
   /**
    * Сохранить телефон котрый указал пользователь в  поле класса
@@ -42,7 +40,7 @@ export class Buyer {
    */
   setPhone(phone: string): void {
     this.buyerData.phone = phone;
-    this.emmit.emit('update_contacts',this.validate())
+    this.emmit.emit("update_contacts", this.validate());
   }
   /**
    * Сохранить адресс котрый ввел пользователь в  поле класса
@@ -50,7 +48,7 @@ export class Buyer {
    */
   setAddress(address: string): void {
     this.buyerData.address = address;
-    this.emmit.emit('update_order',this.validate())
+    this.emmit.emit("update_order", this.validate());
   }
 
   /**
@@ -75,15 +73,17 @@ export class Buyer {
     this.buyerData = buyerDataNew;
   }
 
-  /**
-   * Валидация сохранных данных о пользователе в поле класса -  (buyerData: IBuyer).
-   * @returns В случаи если все данные валидны вернется обьект {valid: true}, если в данных есть ошибка  вернтеся обьект  {valide: false, eror:[Имя поля с ошибкой]: тип ошибки }
-   */
-  validate() {
-   return{ payment: this.buyerData.payment ? '': 'Необходимо выбрать способ оплаты',
-    email: this.buyerData.email ? '': 'Не заполнен email',
-    phone: this.buyerData.phone ? '': 'Не заполнен телефон',
-    address: this.buyerData.address ? '': 'Не заполнен адресс',
-   }
+  /**     
+  * Проверяет каждое значение обьекта buyerData, 
+  * если данные не прошли валидацию в соответсвуюшем поле будет указана ошибка
+  * @returns {IBuyer}
+  */
+  validate(): IBuyer {
+    return {
+      payment: this.buyerData.payment,
+      email: this.buyerData.email ? "" : "Не заполнен email",
+      phone: this.buyerData.phone ? "" : "Не заполнен телефон",
+      address: this.buyerData.address ? "" : "Не заполнен адресс",
+    };
   }
 }
