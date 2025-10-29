@@ -1,6 +1,7 @@
-import { ensureElement } from "../../utils/utils";
-import { Component } from "../base/Component";
-import { EventEmitter } from "../base/Events";
+import { MODAL_ACTIVE } from '../../main';
+import { EnsureElement } from '../../utils/utils';
+import { Component } from '../base/Component';
+import { EventEmitter } from '../base/Events';
 
 /**
  * Интерфейс описания данных для Modal.
@@ -58,33 +59,33 @@ export class Modal extends Component<IModal> {
     /**
      * Поле для контента
      */
-    this.elementContent = ensureElement<HTMLElement>(
-      ".modal__content",
+    this.elementContent = EnsureElement<HTMLElement>(
+      '.modal__content',
       this.container
     );
 
     /**
      * Кнопка закрытия
      */
-    this.elementCloseButton = ensureElement<HTMLButtonElement>(
-      ".modal__close",
+    this.elementCloseButton = EnsureElement<HTMLButtonElement>(
+      '.modal__close',
       this.container
     );
 
     /**
      * Обработка нажатия на кнопку закрытия.
      */
-    this.elementCloseButton.addEventListener("click", () => {
-      this.close = 'modal_active'
+    this.elementCloseButton.addEventListener('click', () => {
+      this.close = MODAL_ACTIVE;
     });
 
     /**
      * Обработка клика по фону модального окна (если клик вне контента модальное окно закроется).
      */
-    this.elementModal.addEventListener("click", (e) => {
+    this.elementModal.addEventListener('click', (e) => {
       const target = e.target as HTMLElement;
       if (target === this.container) {
-        this.close = 'modal_active'
+        this.close = MODAL_ACTIVE;
       }
     });
   }
@@ -94,7 +95,7 @@ export class Modal extends Component<IModal> {
    * @param {HTMLElement} value - Элемент, который будет вставлен в содержимое.
    */
   set content(value: HTMLElement) {
-    this.elementContent.innerHTML = "";
+    this.elementContent.innerHTML = '';
     this.elementContent.appendChild(value);
   }
 
@@ -104,7 +105,7 @@ export class Modal extends Component<IModal> {
    */
   set open(value: string) {
     this.container.classList.add(value);
-    document.body.style.overflow = "hidden";
+    document.body.style.overflow = 'hidden';
   }
 
   /**
@@ -113,7 +114,6 @@ export class Modal extends Component<IModal> {
    */
   set close(value: string) {
     this.container.classList.remove(value);
-    document.body.style.overflow = "";
+    document.body.style.overflow = '';
   }
-
 }

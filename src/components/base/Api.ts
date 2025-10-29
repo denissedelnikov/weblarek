@@ -1,4 +1,4 @@
-type ApiPostMethods = "POST" | "PUT" | "DELETE";
+type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
 
 export class Api {
   readonly baseUrl: string;
@@ -8,7 +8,7 @@ export class Api {
     this.baseUrl = baseUrl;
     this.options = {
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         ...((options.headers as object) ?? {}),
       },
     };
@@ -25,14 +25,14 @@ export class Api {
   get<T extends object>(uri: string) {
     return fetch(this.baseUrl + uri, {
       ...this.options,
-      method: "GET",
+      method: 'GET',
     }).then(this.handleResponse<T>);
   }
 
   post<T extends object>(
     uri: string,
     data: object,
-    method: ApiPostMethods = "POST"
+    method: ApiPostMethods = 'POST'
   ) {
     return fetch(this.baseUrl + uri, {
       ...this.options,

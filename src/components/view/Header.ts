@@ -1,6 +1,7 @@
-import { Component } from "../base/Component";
-import { ensureElement } from "../../utils/utils";
-import { EventEmitter } from "../base/Events";
+import { Component } from '../base/Component';
+import { EnsureElement } from '../../utils/utils';
+import { EventEmitter } from '../base/Events';
+import { update_basket } from '../../main';
 
 /**
  * Интерфейс для описания свойств Header.
@@ -47,23 +48,23 @@ export class Header extends Component<IHeader> {
     /**
      * Поле для отображения числа элементов в корзине
      */
-    this.counterElement = ensureElement<HTMLElement>(
-      ".header__basket-counter",
+    this.counterElement = EnsureElement<HTMLElement>(
+      '.header__basket-counter',
       this.container
     );
     /**
      * Поиск кнопки отрытия корзины
      */
-    this.basketButton = ensureElement<HTMLButtonElement>(
-      ".header__basket",
+    this.basketButton = EnsureElement<HTMLButtonElement>(
+      '.header__basket',
       this.container
     );
 
     /**
      * Обработка события клика на кнопку корзины.
      */
-    this.basketButton.addEventListener("click", () => {
-      this.emmiter.emit("update_basket");
+    this.basketButton.addEventListener('click', () => {
+      update_basket();
     });
   }
 

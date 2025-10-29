@@ -1,6 +1,6 @@
-import { Component } from "../base/Component";
-import { ensureElement } from "../../utils/utils";
-import { EventEmitter } from "../base/Events";
+import { Component } from '../base/Component';
+import { EnsureElement } from '../../utils/utils';
+import { EventEmitter } from '../base/Events';
 
 /**
  * Интерфейс для формы.
@@ -34,16 +34,16 @@ export class Form extends Component<IForm> {
     /**
      * Поиск кнопки подтверждения введенных данных
      * */
-    this.elementSubmitButton = ensureElement<HTMLButtonElement>(
-      ".modal__actions > .button",
+    this.elementSubmitButton = EnsureElement<HTMLButtonElement>(
+      '.modal__actions > .button',
       this.container
     );
 
     /**
      * Поиск поля для отображения ошибки
      * */
-    this.elementError = ensureElement<HTMLSpanElement>(
-      ".form__errors",
+    this.elementError = EnsureElement<HTMLSpanElement>(
+      '.form__errors',
       this.container
     );
   }
@@ -107,15 +107,15 @@ export class Order extends Form {
     /**
      * Поиск элементов оплаты и поля для ввода адреса
      */
-    this.elmentPaymentCard = ensureElement<HTMLButtonElement>(
+    this.elmentPaymentCard = EnsureElement<HTMLButtonElement>(
       `[name="card"]`,
       this.container
     );
-    this.elmentPaymentCash = ensureElement<HTMLButtonElement>(
+    this.elmentPaymentCash = EnsureElement<HTMLButtonElement>(
       `[name="cash"]`,
       this.container
     );
-    this.elementInputAddress = ensureElement<HTMLInputElement>(
+    this.elementInputAddress = EnsureElement<HTMLInputElement>(
       `[name="address"]`,
       this.container
     );
@@ -124,10 +124,10 @@ export class Order extends Form {
      * Обработка выбора платёжного метода
      */
     [this.elmentPaymentCard, this.elmentPaymentCash].forEach((item) => {
-      item.addEventListener("click", (e) => {
+      item.addEventListener('click', (e) => {
         const target = e.target as HTMLElement;
-        this.emmit.emit("payment_method", {
-          name: target.getAttribute("name"),
+        this.emmit.emit('payment_method', {
+          name: target.getAttribute('name'),
         });
       });
     });
@@ -135,18 +135,18 @@ export class Order extends Form {
     /**
      * Обработка изменения адреса
      */
-    this.elementInputAddress.addEventListener("change", (e: Event) => {
+    this.elementInputAddress.addEventListener('change', (e: Event) => {
       const target = e.target as HTMLInputElement;
       const value = { address: target.value };
-      this.emmit.emit("address", value);
+      this.emmit.emit('address', value);
     });
 
     /**
-     * Обработка отправки формы 
+     * Обработка отправки формы
      */
-    this.container.addEventListener("submit", (e) => {
+    this.container.addEventListener('submit', (e) => {
       e.preventDefault();
-      this.emmit.emit("click_button_order");
+      this.emmit.emit('click_button_order');
     });
   }
 
@@ -166,22 +166,6 @@ export class Order extends Form {
   set cash(value: string) {
     this.elmentPaymentCard.classList.remove(value);
     this.elmentPaymentCash.classList.add(value);
-  }
-
-  /**
-   * Устанавливает сообщение об ошибке.
-   * @param {string} value - Текст ошибки.
-   */
-  set error(value: string) {
-    super.error = value;
-  }
-
-  /**
-   * Устанавливает кликабельность для кнопки
-   * @param {boolean} value - Статус.
-   */
-  set buttonStatus(value: boolean) {
-    super.buttonStatus = value;
   }
 }
 
@@ -218,49 +202,33 @@ export class Contacts extends Form {
     super(container);
     this.emmit = _emmit;
 
-    this.elmentInputEmail = ensureElement<HTMLInputElement>(
+    this.elmentInputEmail = EnsureElement<HTMLInputElement>(
       `[name="email"]`,
       this.container
     );
-    this.elementInputPhone = ensureElement<HTMLInputElement>(
+    this.elementInputPhone = EnsureElement<HTMLInputElement>(
       `[name="phone"]`,
       this.container
     );
 
     // Обработка изменения email
-    this.elmentInputEmail.addEventListener("change", (e: Event) => {
+    this.elmentInputEmail.addEventListener('change', (e: Event) => {
       const target = e.target as HTMLInputElement;
       const value = { email: target.value };
-      this.emmit.emit("email", value);
+      this.emmit.emit('email', value);
     });
 
     // Обработка изменения инпута
-    this.elementInputPhone.addEventListener("change", (e: Event) => {
+    this.elementInputPhone.addEventListener('change', (e: Event) => {
       const target = e.target as HTMLInputElement;
       const value = { phone: target.value };
-      this.emmit.emit("phone", value);
+      this.emmit.emit('phone', value);
     });
 
     // Обработка отправки формы контактов
-    this.container.addEventListener("submit", (e) => {
+    this.container.addEventListener('submit', (e) => {
       e.preventDefault();
-      this.emmit.emit("click_button_contacts");
+      this.emmit.emit('click_button_contacts');
     });
-  }
-
-  /**
-   * Устанавливает сообщение об ошибке.
-   * @param {string} value - Текст ошибки.
-   */
-  set error(value: string) {
-    super.error = value;
-  }
-
-  /**
-   * Устанавливает кликабельность кнопки
-   * @param {boolean} value - Статус.
-   */
-  set buttonStatus(value: boolean) {
-    super.buttonStatus = value;
   }
 }

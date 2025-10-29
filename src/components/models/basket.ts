@@ -1,5 +1,5 @@
-import { IProduct } from "../../types";
-import { EventEmitter } from "../base/Events";
+import { IProduct } from '../../types';
+import { EventEmitter } from '../base/Events';
 
 export class Basket {
   /** Класс для хранения информации о товарах находяхся в корзине  т.е выбраных пользователем для покупки
@@ -17,7 +17,7 @@ export class Basket {
    */
   addProduct(product: IProduct): void {
     this.basketProduct.push(product);
-    this.emmit.emit("basket_counter");
+    this.emmit.emit('basket_counter');
   }
 
   /**
@@ -33,7 +33,7 @@ export class Basket {
    */
   clear(): void {
     this.basketProduct = [];
-    this.emmit.emit("basket_counter");
+    this.emmit.emit('basket_counter');
   }
 
   /**
@@ -44,7 +44,7 @@ export class Basket {
     const total = this.basketProduct.reduce((acc, item) => {
       if (item.price) {
         // Убираем нецифровые символы и преобразуем в число
-        const priceNumber = parseInt(item.price.replace(/\D/g, ""), 10);
+        const priceNumber = parseInt(item.price.replace(/\D/g, ''), 10);
         return acc + (isNaN(priceNumber) ? 0 : priceNumber);
       }
       return acc; // если цена отсутствует, просто оставляем сумму без изменений
@@ -67,7 +67,7 @@ export class Basket {
    * @returns {IProduct} - Обьект вида интерфеса IProdcut, единичный товар  = id
    */
   getProductById(id: string): IProduct | undefined {
-    return this.basketProduct.find((Product) => Product["id"] == id);
+    return this.basketProduct.find((Product) => Product['id'] == id);
   }
 
   /**
@@ -78,6 +78,6 @@ export class Basket {
     this.basketProduct = this.basketProduct.filter(
       (element) => element.id != product.id
     );
-    this.emmit.emit("basket_counter");
+    this.emmit.emit('basket_counter');
   }
 }

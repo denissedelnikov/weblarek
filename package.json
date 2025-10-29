@@ -7,8 +7,10 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "lint": "eslint src",
-    "fix": "eslint --fix src"
+    "lint": "eslint . --ext .js,.ts,.vue,.jsx,.tsx --fix",
+    "format": "prettier --write .",
+    "fix": "eslint --fix src",
+    "build": "vite build"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",

@@ -1,42 +1,59 @@
-import "./scss/styles.scss";
-import { Product } from "./components/models/product";
-import { Basket } from "./components/models/basket";
-import { Buyer } from "./components/models/buyer";
-import { CommunicationLayer } from "./components/models/CommunicationLayer";
-import { Api } from "./components/base/Api";
-import { API_URL, CDN_URL, settings } from "./utils/constants";
-import { ensureElement, cloneTemplate } from "./utils/utils";
-import { Contacts, Order } from "./components/view/Form";
-import { Success } from "./components/view/Success";
-import { Modal } from "./components/view/modal";
-import { EventEmitter } from "./components/base/Events";
+import './scss/styles.scss';
+import { Product } from './components/models/product';
+import { Basket } from './components/models/basket';
+import { Buyer } from './components/models/buyer';
+import { CommunicationLayer } from './components/models/CommunicationLayer';
+import { Api } from './components/base/Api';
+import { API_URL, CDN_URL, settings } from './utils/constants';
+import { EnsureElement, cloneTemplate } from './utils/utils';
+import { Contacts, Order } from './components/view/Form';
+import { Success } from './components/view/Success';
+import { Modal } from './components/view/modal';
+import { EventEmitter } from './components/base/Events';
 import {
   CardBasket,
   CardCatalog,
   CardPreviw,
   ICardCatalog,
   ICarddPrview,
-} from "./components/view/Card";
-import { Header } from "./components/view/Header";
-import { Catalog } from "./components/view/Catalog";
-import { BasketModal } from "./components/view/BasketModal";
+} from './components/view/Card';
+import { Header } from './components/view/Header';
+import { Catalog } from './components/view/Catalog';
+import { BasketModal } from './components/view/BasketModal';
+
+// Переменные сообшений
+// Предмет без цены
+const NON_PRICE = 'Бесценно';
+// Валюта
+const SINAPS = 'синапсов';
+// Недоступно
+const NOT_AVAILABLE = 'Недоступно';
+// Удалить из корзины
+const DELETE_BASKET = 'Удалить из корзины';
+// Купить
+const BUY = 'Купить';
+// Способо оплаты не выбран
+const CHOICE_PAYMENT = 'Способ оплаты не выбран';
+
+// Класс для модального окна чтобы сделать его видимым
+export const MODAL_ACTIVE = 'modal_active';
 
 // Темплейт коталга
-const catalogTemp = ensureElement<HTMLTemplateElement>(".gallery");
+const catalogTemp = EnsureElement<HTMLTemplateElement>('.gallery');
 // Темплейт для класса первью
-const cardPreviwTemp = cloneTemplate<HTMLTemplateElement>("#card-preview");
+const cardPreviwTemp = cloneTemplate<HTMLTemplateElement>('#card-preview');
 // Темплейт модального окна
-const modalTemp = ensureElement<HTMLElement>("#modal-container");
+const modalTemp = EnsureElement<HTMLElement>('#modal-container');
 // Получем размеку хедера
-const headerTemp = ensureElement<HTMLElement>(".header");
+const headerTemp = EnsureElement<HTMLElement>('.header');
 // Темплейт корзины
-const basketModalTemp = cloneTemplate<HTMLTemplateElement>("#basket");
+const basketModalTemp = cloneTemplate<HTMLTemplateElement>('#basket');
 // Темлейт формы = Способ оплаты, адресс
-const orderTemp = cloneTemplate("#order");
+const orderTemp = cloneTemplate('#order');
 // Тепоейт формы = Емейл, телефон
-const conactsTemp = cloneTemplate("#contacts");
+const conactsTemp = cloneTemplate('#contacts');
 // Шаблон модального окна оформленого заказаа
-const successTemp = cloneTemplate<HTMLTemplateElement>("#success");
+const successTemp = cloneTemplate<HTMLTemplateElement>('#success');
 
 // Создаем экземпляр класса обработчика
 export const eventEmitter = new EventEmitter();
@@ -68,30 +85,35 @@ const buyer = new Buyer(eventEmitter);
 const success = new Success(successTemp, eventEmitter);
 
 // Получаем с сервера массив товаров
-communicationLayer.fetchProducts().then((result) => {
-  product.setProduct(result.items);
-}).catch((error) => {console.error('Ошибка при получении товара',error)});
+communicationLayer
+  .fetchProducts()
+  .then((result) => {
+    product.setProduct(result.items);
+  })
+  .catch((error) => {
+    console.error('Ошибка при получении товара', error);
+  });
 
 /**
  * Создает карточки для каталоге.
  * @param items - массив товаров.
  */
-eventEmitter.on("create_cards_catalog", (products: ICardCatalog[]) => {
+eventEmitter.on('create_cards_catalog', (products: ICardCatalog[]) => {
   const cardCatlogProduct = products.map((product) => {
     // Темплейт карточек каталога
-    const cardTemplate = cloneTemplate<HTMLTemplateElement>("#card-catalog");
+    const cardTemplate = cloneTemplate<HTMLTemplateElement>('#card-catalog');
     // Классс карточек катадога
     const cardCatlog = new CardCatalog(cardTemplate, eventEmitter);
     // Утсанавливаем  цену
     if (!product.price) {
-      product.price = "Бесценно";
+      product.price = NON_PRICE;
     } else {
-      product.price += " синапсов";
+      product.price += ` ${SINAPS}`;
     }
     // Утсанавливаем img
     product.image = CDN_URL + product.image;
-    // Устанавливем селектор категории 
-    product.categorySelector = settings[product.category]
+    // Устанавливем селектор категории
+    product.categorySelector = settings[product.category];
     // Возврашаем разметку карточек
     return cardCatlog.render(product);
   });
@@ -99,34 +121,28 @@ eventEmitter.on("create_cards_catalog", (products: ICardCatalog[]) => {
   catalog.renderCatalog = cardCatlogProduct;
 });
 
-
-
-
-
 /**
  * Обработка клика по карточкам.
  * @param id - id товара по котрому кликнули
  */
-eventEmitter.on("card_click", (target: { id: string }) => {
-  // Поиск по id
-  const setProductId = product.getProductById(target.id);
-  // Устанавливем найденый элемент в поле подробного осмторпа
-  if (setProductId) product.setProductForDisplay(setProductId);
+eventEmitter.on('card_click', (data:{id: string}) => {
+  //Поиск по id
+const setProductId = product.getProductById(data.id);
+  //Устанавливем найденый элемент в поле подробного осмторпа
+if (setProductId) product.setProductForDisplay(setProductId);
 });
 
 /**
  * Установлен предмет для подробного осмотра
  * @param data - Контент товара
  */
-eventEmitter.on("card_preview", (data: ICarddPrview) => {
+eventEmitter.on('card_preview', (data: ICarddPrview) => {
   // Создаем контент окна подробного осмотра
-  if (data.price == "Бесценно") {
-    data.buttonText = "Недоступно";
+  if (data.price == NON_PRICE) {
+    data.buttonText = NOT_AVAILABLE;
     data.buttonStatus = true;
   } else {
-    data.buttonText = basket.getProductById(data.id)
-      ? "Удалить из корзины"
-      : "Купить";
+    data.buttonText = basket.getProductById(data.id) ? DELETE_BASKET : BUY;
     data.buttonStatus = false;
   }
 
@@ -137,21 +153,21 @@ eventEmitter.on("card_preview", (data: ICarddPrview) => {
  * Показываем модальное окно
  * @param data - Контент модального окна
  */
-eventEmitter.on("modal_content_render", (data: HTMLElement) => {
-  modal.render({ open: "modal_active", content: data });
+eventEmitter.on('modal_content_render', (data: HTMLElement) => {
+  modal.render({ open: MODAL_ACTIVE, content: data });
 });
 
 /**
  * Клик по кнопке купить в окне подробного осмотра
  */
-eventEmitter.on("click_button_previw", () => {
+eventEmitter.on('click_button_previw', () => {
   const peoductPrview = product.getProductForDisplay();
   if (peoductPrview) {
     if (!basket.getProductById(peoductPrview.id)) {
-      cardPreview.buttonText = "Удалить из корзины";
+      cardPreview.buttonText = DELETE_BASKET;
       basket.addProduct(peoductPrview);
     } else {
-      cardPreview.buttonText = "Купить";
+      cardPreview.buttonText = BUY;
       basket.deleteProduct(peoductPrview);
     }
   }
@@ -160,23 +176,23 @@ eventEmitter.on("click_button_previw", () => {
 /**
  * Счетчик товаров в корзине
  */
-eventEmitter.on("basket_counter", () => {
+eventEmitter.on('basket_counter', () => {
   header.counter = basket.calculatedProduct();
 });
 
 /**
  * Клик по иконке корзины
  */
-eventEmitter.on("update_basket", () => {
+export function update_basket(){
   const allProduct = basket.getAllProduct();
   if (allProduct.length > 0) {
     eventEmitter.emit(
-      "basket_render",
+      'basket_render',
       basketModal.render({
         list: allProduct.map(({ title, price, id }, index) => {
           // Темп карточки корзины
           const cardBasketTemp =
-            cloneTemplate<HTMLTemplateElement>("#card-basket");
+            cloneTemplate<HTMLTemplateElement>('#card-basket');
           const cardBasket = new CardBasket(cardBasketTemp, eventEmitter);
           return cardBasket.render({
             id,
@@ -185,56 +201,53 @@ eventEmitter.on("update_basket", () => {
             counter: String(index + 1),
           });
         }),
-        priceCounter: basket.calculatedPrice() + " синапсов",
+        priceCounter: basket.calculatedPrice() + ' синапсов',
         buttonStatus: false,
       })
     );
   } else {
     eventEmitter.emit(
-      "basket_render",
+      'basket_render',
       basketModal.render({
-        priceCounter: "0 синапсов",
+        priceCounter: '0 синапсов',
         buttonStatus: true,
         list: [],
       })
     );
   }
-});
+};
 
-eventEmitter.on("basket_render", (data: HTMLElement) => {
+eventEmitter.on('basket_render', (data: HTMLElement) => {
   // ПЕредаем  в рендер модалного окна
-  eventEmitter.emit("modal_content_render", data);
+  eventEmitter.emit('modal_content_render', data);
 });
 
-eventEmitter.on("card_delete_basket", (data: Event) => {
-  const target = data.target as HTMLElement;
+eventEmitter.on('card_delete_basket', (data: {id: string}) => {
   // Родительский блок карточки берем его id
-  const id = target.parentElement?.dataset.id;
+  const id = data.id
   // Поиск по id в корзие
-  if (id) {
-    // Найденый элемент
     const product = basket.getProductById(id);
     if (product)
       // Удаляем
       basket.deleteProduct(product);
-  }
+  
 
   /** Обновить корзину*/
-  eventEmitter.emit("update_basket");
+  update_basket();
 });
 
 /** Клк по кнопке оформления заказа */
-eventEmitter.on("click_basket_buy", () => {
-  eventEmitter.emit("modal_content_render", order.render());
+eventEmitter.on('click_basket_buy', () => {
+  eventEmitter.emit('modal_content_render', order.render());
 });
 
 /**
  * Обновились данные платежного метода
  * @param {name: card | cash} - Способ оплаты
  */
-eventEmitter.on("payment_method", (data: { name: "cash" | "card" }) => {
+eventEmitter.on('payment_method', (data: { name: 'cash' | 'card' }) => {
   // Добовляем класс для отображения рамки у выбраного метода оплаты
-  order.render({ [data.name]: "button_alt-active" });
+  order.render({ [data.name]: 'button_alt-active' });
   // Устанавливаем способ оплаты класс Buyer
   buyer.setPayment(data.name);
 });
@@ -243,7 +256,7 @@ eventEmitter.on("payment_method", (data: { name: "cash" | "card" }) => {
  * Обновились данные адресса
  * @param {address: string} - Адресс введеный пользователем
  */
-eventEmitter.on("address", (data: { address: string }) => {
+eventEmitter.on('address', (data: { address: string }) => {
   // Устанавливаем адресс в класс Buyer
   buyer.setAddress(data.address);
 });
@@ -253,9 +266,9 @@ eventEmitter.on("address", (data: { address: string }) => {
  * @param {payment: string, address: string} - Данные котрые ввел пользователь
  */
 eventEmitter.on(
-  "update_order",
+  'update_order',
   (data: { payment: string; address: string }) => {
-    const error = data.payment ? data.address :  'Способ оплаты не установлен'
+    const error = data.payment ? data.address : CHOICE_PAYMENT;
     const buttonStatus = error ? true : false;
 
     order.render({ error, buttonStatus });
@@ -265,15 +278,15 @@ eventEmitter.on(
 /**
  * Клик по кнопке далее формы-ордер
  */
-eventEmitter.on("click_button_order", () => {
-  eventEmitter.emit("modal_content_render", contacts.render());
+eventEmitter.on('click_button_order', () => {
+  eventEmitter.emit('modal_content_render', contacts.render());
 });
 
 /**
  * Обновление данных email
  * @param {email: string}
  */
-eventEmitter.on("email", (data: { email: string }) => {
+eventEmitter.on('email', (data: { email: string }) => {
   // Устанавливаем емейл в класс
   buyer.setEmail(data.email);
 });
@@ -282,7 +295,7 @@ eventEmitter.on("email", (data: { email: string }) => {
  * Обновление данных телефона
  * @param {phone: string}
  */
-eventEmitter.on("phone", (data: { phone: string }) => {
+eventEmitter.on('phone', (data: { phone: string }) => {
   // Устанавливаем телефон в класс
   buyer.setPhone(data.phone);
 });
@@ -291,7 +304,7 @@ eventEmitter.on("phone", (data: { phone: string }) => {
  * Проверяем на валидность поля формы - контакты
  * @param {email: string; phone: string} -  Данные котрые ввел пользователь
  */
-eventEmitter.on("update_contacts", (data: { email: string; phone: string }) => {
+eventEmitter.on('update_contacts', (data: { email: string; phone: string }) => {
   const error = data.email || data.phone;
   const buttonStatus = error ? true : false;
 
@@ -301,31 +314,34 @@ eventEmitter.on("update_contacts", (data: { email: string; phone: string }) => {
 /**
  * Клик по кнопке отправкм формы-контакты
  */
-eventEmitter.on("click_button_contacts", () => {
-  const items = basket.getAllProduct().map(item => item.id)
-  const total = basket.calculatedPrice()
-  const buyerInfo = buyer.getBuyerData()
+eventEmitter.on('click_button_contacts', () => {
+  const items = basket.getAllProduct().map((item) => item.id);
+  const total = basket.calculatedPrice();
+  const buyerInfo = buyer.getBuyerData();
 
-  communicationLayer.sendOrder({...buyerInfo,items,total}).then((result) => {
-    success.price = `Списано ${result.total} синапсов`
-}).catch((error) => {
-  console.error('Ошибка при отправке запроса', error)
-})
+  communicationLayer
+    .sendOrder({ ...buyerInfo, items, total })
+    .then((result) => {
+      // Передаем в отображении модального окна рендер success
+       eventEmitter.emit('modal_content_render', success.render({price:`Списано ${result.total} синапсов`}))
+    })
+    .catch((error) => {
+      console.error('Ошибка при отправке запроса', error);
+    });
 });
 
 /**
  * Передаем рендер окна успешной оплаты в модальное окно
  */
 eventEmitter.on('success_update', (data) => {
-  eventEmitter.emit("modal_content_render", data)
-})
+  eventEmitter.emit('modal_content_render', data);
+    basket.clear();
+  buyer.clearBuyerData();
+});
 
 /**
  * Обработка возврата к каталогу.
  */
-eventEmitter.on("success_click", () => {
-  basket.clear();
-  buyer.clearBuyerData();
-  modal.close = "modal_active";
+eventEmitter.on('success_click', () => {
+  modal.close = MODAL_ACTIVE;
 });
-

@@ -1,6 +1,6 @@
-import { Component } from "../base/Component";
-import { EventEmitter } from "../base/Events";
-import { ensureElement } from "../../utils/utils";
+import { Component } from '../base/Component';
+import { EventEmitter } from '../base/Events';
+import { EnsureElement } from '../../utils/utils';
 
 /**
  * Интерфейс для общего класса
@@ -16,7 +16,7 @@ export interface ICard {
  */
 export interface ICardCatalog extends ICard {
   category: string;
-  categorySelector:string;
+  categorySelector: string;
   image: string;
 }
 
@@ -53,6 +53,11 @@ export class Card extends Component<ICard> {
   protected elementPrice: HTMLElement;
 
   /**
+   * @protected {string} id - поле
+   */
+  protected elementId: string = '';
+
+  /**
    * @param {HTMLElement} container - Родительский элемент.
    */
   constructor(container: HTMLElement) {
@@ -60,12 +65,12 @@ export class Card extends Component<ICard> {
     /**
      * Инициализация элементов.
      */
-    this.elementTitle = ensureElement<HTMLElement>(
-      ".card__title",
+    this.elementTitle = EnsureElement<HTMLElement>(
+      '.card__title',
       this.container
     );
-    this.elementPrice = ensureElement<HTMLElement>(
-      ".card__price",
+    this.elementPrice = EnsureElement<HTMLElement>(
+      '.card__price',
       this.container
     );
   }
@@ -91,7 +96,7 @@ export class Card extends Component<ICard> {
    * @param {string} value
    */
   set id(value: string) {
-    this.container.dataset.id = value;
+    this.elementId = value;
   }
 }
 
@@ -129,14 +134,18 @@ export class CardCatalog extends Card {
     this.elementButton = conteiner;
     this.emmiter = _emmiter;
 
-    this.elementCategory = ensureElement<HTMLElement>(
-      ".card__category",
+    this.elementCategory = EnsureElement<HTMLElement>(
+      '.card__category',
       this.container
     );
-    this.elementImage = ensureElement<HTMLImageElement>(
-      ".card__image",
+    this.elementImage = EnsureElement<HTMLImageElement>(
+      '.card__image',
       this.container
     );
+
+    this.container.addEventListener('click', (e) => {
+      this.emmiter.emit('card_click', { id: this.elementId });
+    });
   }
 
   /**
@@ -151,8 +160,8 @@ export class CardCatalog extends Card {
    * Установка селектора категории.
    * @param {string} value
    */
-  set categorySelector (value: string) {
-    this.elementCategory.classList.add(value)
+  set categorySelector(value: string) {
+    this.elementCategory.classList.add(value);
   }
 
   /**
@@ -186,9 +195,9 @@ export class CardCatalog extends Card {
    */
   render(data?: Partial<ICard>): HTMLElement {
     const element = super.render(data);
-    element.addEventListener("click", () => {
-      this.emmiter.emit("card_click", { id: data?.id });
-    });
+    // element.addEventListener('click', () => {
+    //   this.emmiter.emit('card_click', { id: data?.id });
+    // });
     return element;
   }
 }
@@ -230,25 +239,25 @@ export class CardPreviw extends Card {
   constructor(container: HTMLElement, _emmiter: EventEmitter) {
     super(container);
     this.emmiter = _emmiter;
-    this.elementButtonPreviw = ensureElement<HTMLButtonElement>(
-      ".card__button",
+    this.elementButtonPreviw = EnsureElement<HTMLButtonElement>(
+      '.card__button',
       this.container
     );
-    this.elementText = ensureElement<HTMLElement>(
-      ".card__text",
+    this.elementText = EnsureElement<HTMLElement>(
+      '.card__text',
       this.container
     );
-    this.elementCategory = ensureElement<HTMLElement>(
-      ".card__category",
+    this.elementCategory = EnsureElement<HTMLElement>(
+      '.card__category',
       this.container
     );
-    this.elementImage = ensureElement<HTMLImageElement>(
-      ".card__image",
+    this.elementImage = EnsureElement<HTMLImageElement>(
+      '.card__image',
       this.container
     );
 
-    this.elementButtonPreviw.addEventListener("click", (e) => {
-      this.emmiter.emit("click_button_previw", e);
+    this.elementButtonPreviw.addEventListener('click', (e) => {
+      this.emmiter.emit('click_button_previw', e);
     });
   }
 
@@ -316,7 +325,7 @@ export class CardPreviw extends Card {
   render(data?: Partial<ICarddPrview>): HTMLElement {
     if (!data) return this.container;
     const cardPreviewRender = super.render(data);
-    this.emmiter.emit("modal_content_render", cardPreviewRender);
+    this.emmiter.emit('modal_content_render', cardPreviewRender);
     return cardPreviewRender;
   }
 }
@@ -347,26 +356,18 @@ export class CardBasket extends Card {
   constructor(container: HTMLElement, _emmit: EventEmitter) {
     super(container);
     this.emmit = _emmit;
-    this.counterBasket = ensureElement<HTMLElement>(
-      ".basket__item-index",
+    this.counterBasket = EnsureElement<HTMLElement>(
+      '.basket__item-index',
       this.container
     );
-    this.elementDeleteButton = ensureElement<HTMLElement>(
-      ".basket__item-delete",
+    this.elementDeleteButton = EnsureElement<HTMLElement>(
+      '.basket__item-delete',
       this.container
     );
 
-    this.elementDeleteButton.addEventListener("click", (e: Event) => {
-      this.emmit.emit("card_delete_basket", e);
+    this.elementDeleteButton.addEventListener('click', () => {
+      this.emmit.emit('card_delete_basket', { id: this.elementId });
     });
-  }
-
-  /**
-   * Установка ID.
-   * @param {string} value
-   */
-  set id(value: string) {
-    super.id = value;
   }
 
   /**

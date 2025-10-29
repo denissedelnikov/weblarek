@@ -1,4 +1,4 @@
-import { getServerIProduct, postServerIBuyer, IApi } from "../../types";
+import { getServerIProduct, postServerIBuyer, IApi } from '../../types';
 
 export class CommunicationLayer {
   /** Класс CommunicationLayer реализует коммуникационный слой приложения. Его задача — осуществлять HTTP-запросы к API сервера через объект api, инкапсулируя детали общения с сервером: Получать данные товаров через GET-запрос и Отправлять данные заказа через POST-запрос*/
@@ -19,14 +19,19 @@ export class CommunicationLayer {
    * @returns {Promise<getServerIProduct>} = Массив товаров с сервера
    */
   async fetchProducts(): Promise<getServerIProduct> {
-    return await this.api.get<getServerIProduct>("/product/");
+    return await this.api.get<getServerIProduct>('/product/');
   }
 
   /**
    * Выполняет post запрос на эндпоинт /order/ и передаёт в него данные, полученные в параметрах метода
    * @param {postServerIBuyer} orderData - Обьект с информациией о покупателе и выбраные товары
    */
-  async sendOrder(orderData: postServerIBuyer): Promise<{total: string, id: string}> {
-    return await this.api.post("/order/", orderData);
+  async sendOrder(
+    orderData: postServerIBuyer
+  ): Promise<{ total: string; id: string }> {
+    return await this.api.post<{ total: string; id: string }>(
+      '/order/',
+      orderData
+    );
   }
 }

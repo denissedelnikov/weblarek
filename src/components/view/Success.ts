@@ -1,6 +1,6 @@
-import { Component } from "../../components/base/Component";
-import { ensureElement } from "../../utils/utils";
-import { EventEmitter } from "../base/Events";
+import { Component } from '../../components/base/Component';
+import { EnsureElement } from '../../utils/utils';
+import { EventEmitter } from '../base/Events';
 
 /**
  * Интерфейс для данных компонента Success.
@@ -47,23 +47,23 @@ export class Success extends Component<ISuccess> {
     /**
      * Поле для отображения потраченной суммы
      */
-    this.elementSellCounter = ensureElement<HTMLElement>(
-      ".order-success__description",
+    this.elementSellCounter = EnsureElement<HTMLElement>(
+      '.order-success__description',
       this.container
     );
     /**
      * Кнопка закрытия
      */
-    this.elementCloseButton = ensureElement<HTMLElement>(
-      ".order-success__close",
+    this.elementCloseButton = EnsureElement<HTMLElement>(
+      '.order-success__close',
       this.container
     );
 
     /**
      * Обработка клика по кнопке закрытия.
      */
-    this.elementCloseButton.addEventListener("click", () => {
-      this.emmit.emit("success_click");
+    this.elementCloseButton.addEventListener('click', () => {
+      this.emmit.emit('success_click');
     });
   }
 
@@ -73,6 +73,6 @@ export class Success extends Component<ISuccess> {
    */
   set price(value: string) {
     this.elementSellCounter.textContent = value;
-    this.emmit.emit('success_update', super.render())
+    this.emmit.emit('success_update', super.render());
   }
 }
