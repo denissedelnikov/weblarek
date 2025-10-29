@@ -143,7 +143,7 @@ export class CardCatalog extends Card {
       this.container
     );
 
-    this.container.addEventListener('click', (e) => {
+    this.container.addEventListener('click', () => {
       this.emmiter.emit('card_click', { id: this.elementId });
     });
   }

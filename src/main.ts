@@ -125,11 +125,11 @@ eventEmitter.on('create_cards_catalog', (products: ICardCatalog[]) => {
  * Обработка клика по карточкам.
  * @param id - id товара по котрому кликнули
  */
-eventEmitter.on('card_click', (data:{id: string}) => {
+eventEmitter.on('card_click', (data: { id: string }) => {
   //Поиск по id
-const setProductId = product.getProductById(data.id);
+  const setProductId = product.getProductById(data.id);
   //Устанавливем найденый элемент в поле подробного осмторпа
-if (setProductId) product.setProductForDisplay(setProductId);
+  if (setProductId) product.setProductForDisplay(setProductId);
 });
 
 /**
@@ -183,7 +183,7 @@ eventEmitter.on('basket_counter', () => {
 /**
  * Клик по иконке корзины
  */
-export function update_basket(){
+export function update_basket() {
   const allProduct = basket.getAllProduct();
   if (allProduct.length > 0) {
     eventEmitter.emit(
@@ -215,22 +215,19 @@ export function update_basket(){
       })
     );
   }
-};
+}
 
 eventEmitter.on('basket_render', (data: HTMLElement) => {
   // ПЕредаем  в рендер модалного окна
   eventEmitter.emit('modal_content_render', data);
 });
 
-eventEmitter.on('card_delete_basket', (data: {id: string}) => {
-  // Родительский блок карточки берем его id
-  const id = data.id
+eventEmitter.on('card_delete_basket', (data: { id: string }) => {
   // Поиск по id в корзие
-    const product = basket.getProductById(id);
-    if (product)
-      // Удаляем
-      basket.deleteProduct(product);
-  
+  const product = basket.getProductById(data.id);
+  if (product)
+    // Удаляем
+    basket.deleteProduct(product);
 
   /** Обновить корзину*/
   update_basket();
@@ -323,7 +320,10 @@ eventEmitter.on('click_button_contacts', () => {
     .sendOrder({ ...buyerInfo, items, total })
     .then((result) => {
       // Передаем в отображении модального окна рендер success
-       eventEmitter.emit('modal_content_render', success.render({price:`Списано ${result.total} синапсов`}))
+      eventEmitter.emit(
+        'modal_content_render',
+        success.render({ price: `Списано ${result.total} синапсов` })
+      );
     })
     .catch((error) => {
       console.error('Ошибка при отправке запроса', error);
@@ -335,7 +335,7 @@ eventEmitter.on('click_button_contacts', () => {
  */
 eventEmitter.on('success_update', (data) => {
   eventEmitter.emit('modal_content_render', data);
-    basket.clear();
+  basket.clear();
   buyer.clearBuyerData();
 });
 
