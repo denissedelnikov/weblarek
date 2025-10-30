@@ -126,7 +126,7 @@ export class Order extends Form {
     [this.elmentPaymentCard, this.elmentPaymentCash].forEach((item) => {
       item.addEventListener('click', (e) => {
         const target = e.target as HTMLElement;
-        this.emmit.emit('payment_method', {
+        this.emmit.emit('paymentmethod', {
           name: target.getAttribute('name'),
         });
       });
@@ -146,7 +146,7 @@ export class Order extends Form {
      */
     this.container.addEventListener('submit', (e) => {
       e.preventDefault();
-      this.emmit.emit('click_button_order');
+      this.emmit.emit('clickbuttonorder');
     });
   }
 
@@ -226,9 +226,9 @@ export class Contacts extends Form {
     });
 
     // Обработка отправки формы контактов
-    this.container.addEventListener('submit', (e) => {
+    this.container.addEventListener('submit', (e: Event) => {
       e.preventDefault();
-      this.emmit.emit('click_button_contacts');
+      this.emmit.emit('clickbuttoncontacts');
     });
   }
 }

@@ -63,7 +63,7 @@ export class Success extends Component<ISuccess> {
      * Обработка клика по кнопке закрытия.
      */
     this.elementCloseButton.addEventListener('click', () => {
-      this.emmit.emit('success_click');
+      this.emmit.emit('successclick');
     });
   }
 
@@ -73,6 +73,6 @@ export class Success extends Component<ISuccess> {
    */
   set price(value: string) {
     this.elementSellCounter.textContent = value;
-    this.emmit.emit('success_update', super.render());
+    this.emmit.emit('successupdate', super.render());
   }
 }

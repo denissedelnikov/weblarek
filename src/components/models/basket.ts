@@ -17,7 +17,7 @@ export class Basket {
    */
   addProduct(product: IProduct): void {
     this.basketProduct.push(product);
-    this.emmit.emit('basket_counter');
+    this.emmit.emit('basketcounter');
   }
 
   /**
@@ -33,7 +33,7 @@ export class Basket {
    */
   clear(): void {
     this.basketProduct = [];
-    this.emmit.emit('basket_counter');
+    this.emmit.emit('basketcounter');
   }
 
   /**
@@ -78,6 +78,6 @@ export class Basket {
     this.basketProduct = this.basketProduct.filter(
       (element) => element.id != product.id
     );
-    this.emmit.emit('basket_counter');
+    this.emmit.emit('basketcounter');
   }
 }

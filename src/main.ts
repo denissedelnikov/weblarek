@@ -98,7 +98,7 @@ communicationLayer
  * Создает карточки для каталоге.
  * @param items - массив товаров.
  */
-eventEmitter.on('create_cards_catalog', (products: ICardCatalog[]) => {
+eventEmitter.on('createcardscatalog', (products: ICardCatalog[]) => {
   const cardCatlogProduct = products.map((product) => {
     // Темплейт карточек каталога
     const cardTemplate = cloneTemplate<HTMLTemplateElement>('#card-catalog');
@@ -125,7 +125,7 @@ eventEmitter.on('create_cards_catalog', (products: ICardCatalog[]) => {
  * Обработка клика по карточкам.
  * @param id - id товара по котрому кликнули
  */
-eventEmitter.on('card_click', (data: { id: string }) => {
+eventEmitter.on('cardclick', (data: { id: string }) => {
   //Поиск по id
   const setProductId = product.getProductById(data.id);
   //Устанавливем найденый элемент в поле подробного осмторпа
@@ -136,7 +136,7 @@ eventEmitter.on('card_click', (data: { id: string }) => {
  * Установлен предмет для подробного осмотра
  * @param data - Контент товара
  */
-eventEmitter.on('card_preview', (data: ICarddPrview) => {
+eventEmitter.on('cardpreview', (data: ICarddPrview) => {
   // Создаем контент окна подробного осмотра
   if (data.price == NON_PRICE) {
     data.buttonText = NOT_AVAILABLE;
@@ -146,21 +146,21 @@ eventEmitter.on('card_preview', (data: ICarddPrview) => {
     data.buttonStatus = false;
   }
 
-  modal_content_render(cardPreview.render(data));
+  modalContentRender(cardPreview.render(data));
 });
 
 /**
  * Показываем модальное окно
  * @param data - Контент модального окна
  */
-function modal_content_render(data: HTMLElement) {
+function modalContentRender(data: HTMLElement) {
   modal.render({ open: MODAL_ACTIVE, content: data });
 }
 
 /**
  * Клик по кнопке купить в окне подробного осмотра
  */
-eventEmitter.on('click_button_previw', () => {
+eventEmitter.on('clickbuttonpreviw', () => {
   const peoductPrview = product.getProductForDisplay();
   if (peoductPrview) {
     if (!basket.getProductById(peoductPrview.id)) {
@@ -176,14 +176,14 @@ eventEmitter.on('click_button_previw', () => {
 /**
  * Счетчик товаров в корзине
  */
-eventEmitter.on('basket_counter', () => {
+eventEmitter.on('basketcounter', () => {
   header.counter = basket.calculatedProduct();
 });
 
 /**
  * Рендер окна корзины
  */
-export function update_basket(id?: string) {
+function updateBasket(id?: string) {
   if (id) {
     const product = basket.getProductById(id);
     if (product)
@@ -192,45 +192,48 @@ export function update_basket(id?: string) {
   }
   const allProduct = basket.getAllProduct();
   if (allProduct.length > 0) {
-    modal_content_render(
-      basketModal.render({
-        list: allProduct.map(({ title, price, id }, index) => {
-          // Темп карточки корзины
-          const cardBasketTemp =
-            cloneTemplate<HTMLTemplateElement>('#card-basket');
-          const cardBasket = new CardBasket(cardBasketTemp, eventEmitter);
-          return cardBasket.render({
-            id,
-            title,
-            price,
-            counter: String(index + 1),
-          });
-        }),
-        priceCounter: basket.calculatedPrice() + ' синапсов',
-        buttonStatus: false,
-      })
-    );
+    return basketModal.render({
+      list: allProduct.map(({ title, price, id }, index) => {
+        // Темп карточки корзины
+        const cardBasketTemp =
+          cloneTemplate<HTMLTemplateElement>('#card-basket');
+        const cardBasket = new CardBasket(cardBasketTemp, eventEmitter);
+        return cardBasket.render({
+          id,
+          title,
+          price,
+          counter: String(index + 1),
+        });
+      }),
+      priceCounter: basket.calculatedPrice() + ' синапсов',
+      buttonStatus: false,
+    });
   } else {
-    modal_content_render(
-      basketModal.render({
-        priceCounter: '0 синапсов',
-        buttonStatus: true,
-        list: [],
-      })
-    );
+    return basketModal.render({
+      priceCounter: '0 синапсов',
+      buttonStatus: true,
+      list: [],
+    });
   }
 }
 
-/** Клк по кнопке оформления заказа */
-eventEmitter.on('click_basket_buy', () => {
-  modal_content_render(order.render());
+eventEmitter.on('clickbasketbutton', () => {
+  modalContentRender(updateBasket());
 });
 
+/** Клк по кнопке оформления заказа */
+eventEmitter.on('clickbasketbuy', () => {
+  modalContentRender(order.render());
+});
+
+eventEmitter.on('clickdeletebutton', (data: { id: string }) => {
+  modalContentRender(updateBasket(data.id));
+});
 /**
  * Обновились данные платежного метода
  * @param {name: card | cash} - Способ оплаты
  */
-eventEmitter.on('payment_method', (data: { name: 'cash' | 'card' }) => {
+eventEmitter.on('paymentmethod', (data: { name: 'cash' | 'card' }) => {
   // Добовляем класс для отображения рамки у выбраного метода оплаты
   order.render({ [data.name]: 'button_alt-active' });
   // Устанавливаем способ оплаты класс Buyer
@@ -250,21 +253,18 @@ eventEmitter.on('address', (data: { address: string }) => {
  * Проверяем  на валидность поля формы - ордер
  * @param {payment: string, address: string} - Данные котрые ввел пользователь
  */
-eventEmitter.on(
-  'update_order',
-  (data: { payment: string; address: string }) => {
-    const error = data.payment ? data.address : CHOICE_PAYMENT;
-    const buttonStatus = error ? true : false;
+eventEmitter.on('updateorder', (data: { payment: string; address: string }) => {
+  const error = data.payment ? data.address : CHOICE_PAYMENT;
+  const buttonStatus = error ? true : false;
 
-    order.render({ error, buttonStatus });
-  }
-);
+  order.render({ error, buttonStatus });
+});
 
 /**
  * Клик по кнопке далее формы-ордер
  */
-eventEmitter.on('click_button_order', () => {
-  modal_content_render(contacts.render());
+eventEmitter.on('clickbuttonorder', () => {
+  modalContentRender(contacts.render());
 });
 
 /**
@@ -289,7 +289,7 @@ eventEmitter.on('phone', (data: { phone: string }) => {
  * Проверяем на валидность поля формы - контакты
  * @param {email: string; phone: string} -  Данные котрые ввел пользователь
  */
-eventEmitter.on('update_contacts', (data: { email: string; phone: string }) => {
+eventEmitter.on('updatecontacts', (data: { email: string; phone: string }) => {
   const error = data.email || data.phone;
   const buttonStatus = error ? true : false;
 
@@ -299,7 +299,7 @@ eventEmitter.on('update_contacts', (data: { email: string; phone: string }) => {
 /**
  * Клик по кнопке отправкм формы-контакты
  */
-eventEmitter.on('click_button_contacts', () => {
+eventEmitter.on('clickbuttoncontacts', () => {
   const items = basket.getAllProduct().map((item) => item.id);
   const total = basket.calculatedPrice();
   const buyerInfo = buyer.getBuyerData();
@@ -308,7 +308,7 @@ eventEmitter.on('click_button_contacts', () => {
     .sendOrder({ ...buyerInfo, items, total })
     .then((result) => {
       // Передаем в отображении модального окна рендер success
-      modal_content_render(
+      modalContentRender(
         success.render({ price: `Списано ${result.total} синапсов` })
       );
       basket.clear();
@@ -321,7 +321,7 @@ eventEmitter.on('click_button_contacts', () => {
 
 /**
  * Обработка возврата к каталогу.
- */
-eventEmitter.on('success_click', () => {
+//  */
+eventEmitter.on('successclick', () => {
   modal.close = MODAL_ACTIVE;
 });

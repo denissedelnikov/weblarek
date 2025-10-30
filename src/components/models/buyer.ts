@@ -23,7 +23,7 @@ export class Buyer {
    */
   setPayment(payment: TPpayment): void {
     this.buyerData.payment = payment;
-    this.emmit.emit('update_order', this.validate());
+    this.emmit.emit('updateorder', this.validate());
   }
 
   /**
@@ -32,7 +32,7 @@ export class Buyer {
    */
   setEmail(email: string): void {
     this.buyerData.email = email;
-    this.emmit.emit('update_contacts', this.validate());
+    this.emmit.emit('updatecontacts', this.validate());
   }
   /**
    * Сохранить телефон котрый указал пользователь в  поле класса
@@ -40,7 +40,7 @@ export class Buyer {
    */
   setPhone(phone: string): void {
     this.buyerData.phone = phone;
-    this.emmit.emit('update_contacts', this.validate());
+    this.emmit.emit('updatecontacts', this.validate());
   }
   /**
    * Сохранить адресс котрый ввел пользователь в  поле класса
@@ -48,7 +48,7 @@ export class Buyer {
    */
   setAddress(address: string): void {
     this.buyerData.address = address;
-    this.emmit.emit('update_order', this.validate());
+    this.emmit.emit('updateorder', this.validate());
   }
 
   /**

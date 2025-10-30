@@ -1,8 +1,6 @@
 import { Component } from '../base/Component';
 import { EventEmitter } from '../base/Events';
 import { EnsureElement } from '../../utils/utils';
-import { update_basket } from '../../main';
-import { BasketModal } from './BasketModal';
 
 /**
  * Интерфейс для общего класса
@@ -146,7 +144,7 @@ export class CardCatalog extends Card {
     );
 
     this.container.addEventListener('click', () => {
-      this.emmiter.emit('card_click', { id: this.elementId });
+      this.emmiter.emit('cardclick', { id: this.elementId });
     });
   }
 
@@ -228,15 +226,15 @@ export class CardPreviw extends Card {
   /**
    * @protected {EventEmitter} emmiter - Объект события.
    */
-  protected emmiter: EventEmitter;
+  protected emmit: EventEmitter;
 
   /**
    * @param {HTMLElement} container - Родительский элемент.
    * @param {EventEmitter} _emmiter - Объект события.
    */
-  constructor(container: HTMLElement, _emmiter: EventEmitter) {
+  constructor(container: HTMLElement, _emmit: EventEmitter) {
     super(container);
-    this.emmiter = _emmiter;
+    this.emmit = _emmit;
     this.elementButtonPreviw = EnsureElement<HTMLButtonElement>(
       '.card__button',
       this.container
@@ -254,8 +252,8 @@ export class CardPreviw extends Card {
       this.container
     );
 
-    this.elementButtonPreviw.addEventListener('click', (e) => {
-      this.emmiter.emit('click_button_previw', e);
+    this.elementButtonPreviw.addEventListener('click', () => {
+      this.emmit.emit('clickbuttonpreviw');
     });
   }
 
@@ -322,9 +320,7 @@ export class CardPreviw extends Card {
    */
   render(data?: Partial<ICarddPrview>): HTMLElement {
     if (!data) return this.container;
-    const cardPreviewRender = super.render(data);
-    this.emmiter.emit('modal_content_render', cardPreviewRender);
-    return cardPreviewRender;
+    return super.render(data);
   }
 }
 /**
@@ -364,24 +360,8 @@ export class CardBasket extends Card {
     );
 
     this.elementDeleteButton.addEventListener('click', () => {
-      update_basket(this.elementId);
+      this.emmit.emit('clickdeletebutton', { id: this.elementId });
     });
-  }
-
-  /**
-   * Установка цены.
-   * @param {string} value
-   */
-  set price(value: string) {
-    super.price = value;
-  }
-
-  /**
-   * Установка заголовка.
-   * @param {string} value
-   */
-  set title(value: string) {
-    super.title = value;
   }
 
   /**

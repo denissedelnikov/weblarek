@@ -58,7 +58,7 @@ export class BasketModal extends Component<IBasketModal> {
      * Ожидание клика по кнопке перехода к оформлению заказа
      */
     this.elementButton.addEventListener('click', () => {
-      this.emmit.emit('click_basket_buy');
+      this.emmit.emit('clickbasketbuy');
     });
   }
 

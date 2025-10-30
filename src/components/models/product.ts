@@ -19,7 +19,7 @@ export class Product {
    */
   setProduct(arrayProduct: IProduct[]): void {
     this.AllProduct = arrayProduct;
-    this.emmit.emit('create_cards_catalog', this.AllProduct);
+    this.emmit.emit('createcardscatalog', this.AllProduct);
   }
 
   /**
@@ -46,7 +46,7 @@ export class Product {
    */
   setProductForDisplay(IProductDisplay: IProduct): void {
     this.setProductDisplay = IProductDisplay;
-    this.emmit.emit('card_preview', this.setProductDisplay);
+    this.emmit.emit('cardpreview', this.setProductDisplay);
   }
 
   /**

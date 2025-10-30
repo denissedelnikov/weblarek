@@ -1,7 +1,6 @@
 import { Component } from '../base/Component';
 import { EnsureElement } from '../../utils/utils';
 import { EventEmitter } from '../base/Events';
-import { update_basket } from '../../main';
 
 /**
  * Интерфейс для описания свойств Header.
@@ -34,16 +33,16 @@ export class Header extends Component<IHeader> {
    * Объект для emit-событий.
    * @type {EventEmitter}
    */
-  emmiter: EventEmitter;
+  emmit: EventEmitter;
 
   /**
    * Создает экземпляр Header.
    * @param {HTMLElement} container - Контейнер элемента Header.
    * @param {EventEmitter} _emmiter - Объект для событий.
    */
-  constructor(container: HTMLElement, _emmiter: EventEmitter) {
+  constructor(container: HTMLElement, _emmit: EventEmitter) {
     super(container);
-    this.emmiter = _emmiter;
+    this.emmit = _emmit;
 
     /**
      * Поле для отображения числа элементов в корзине
@@ -64,7 +63,7 @@ export class Header extends Component<IHeader> {
      * Обработка события клика на кнопку корзины.
      */
     this.basketButton.addEventListener('click', () => {
-      update_basket();
+      this.emmit.emit('clickbasketbutton');
     });
   }
 

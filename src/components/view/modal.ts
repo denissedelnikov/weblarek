@@ -43,17 +43,17 @@ export class Modal extends Component<IModal> {
    * Объект EventEmitter для коммуникации.
    * @type {EventEmitter}
    */
-  emmiter: EventEmitter;
+  emmit: EventEmitter;
 
   /**
    * Конструктор класса Modal.
    * @param {HTMLElement} container - Контейнер модального окна.
-   * @param {EventEmitter} _emmiter - Объект для событий.
+   * @param {EventEmitter} _emmit - Объект для событий.
    */
-  constructor(container: HTMLElement, _emmiter: EventEmitter) {
+  constructor(container: HTMLElement, _emmit: EventEmitter) {
     super(container);
 
-    this.emmiter = _emmiter;
+    this.emmit = _emmit;
     this.elementModal = container;
 
     /**
