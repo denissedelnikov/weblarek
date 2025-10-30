@@ -1,6 +1,8 @@
 import { Component } from '../base/Component';
 import { EventEmitter } from '../base/Events';
 import { EnsureElement } from '../../utils/utils';
+import { update_basket } from '../../main';
+import { BasketModal } from './BasketModal';
 
 /**
  * Интерфейс для общего класса
@@ -194,11 +196,7 @@ export class CardCatalog extends Card {
    * @returns {HTMLElement}
    */
   render(data?: Partial<ICard>): HTMLElement {
-    const element = super.render(data);
-    // element.addEventListener('click', () => {
-    //   this.emmiter.emit('card_click', { id: data?.id });
-    // });
-    return element;
+    return super.render(data);
   }
 }
 
@@ -366,7 +364,7 @@ export class CardBasket extends Card {
     );
 
     this.elementDeleteButton.addEventListener('click', () => {
-      this.emmit.emit('card_delete_basket', { id: this.elementId });
+      update_basket(this.elementId);
     });
   }
 

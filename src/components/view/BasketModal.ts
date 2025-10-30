@@ -8,7 +8,7 @@ export interface IBasketModal {
   priceCounter: string;
 }
 
-const NOITEMBASKET = 'Корзина пустая'; // Сообшение о пустой корзине
+const NO_ITEM = 'Корзина пустая'; // Сообшение о пустой корзине
 
 export class BasketModal extends Component<IBasketModal> {
   /**
@@ -83,7 +83,7 @@ export class BasketModal extends Component<IBasketModal> {
    * @param  {HTMLElement[]} value - Отрендереные карточки товара находяшиесь в корзине или пусто
    */
   set list(value: HTMLElement[]) {
-    this.elementBasketList.innerHTML = value.length > 0 ? '' : NOITEMBASKET;
+    this.elementBasketList.innerHTML = value.length > 0 ? '' : NO_ITEM;
     this.elementBasketList.append(...value);
   }
 }

@@ -146,16 +146,16 @@ eventEmitter.on('card_preview', (data: ICarddPrview) => {
     data.buttonStatus = false;
   }
 
-  cardPreview.render(data);
+  modal_content_render(cardPreview.render(data));
 });
 
 /**
  * Показываем модальное окно
  * @param data - Контент модального окна
  */
-eventEmitter.on('modal_content_render', (data: HTMLElement) => {
+function modal_content_render(data: HTMLElement) {
   modal.render({ open: MODAL_ACTIVE, content: data });
-});
+}
 
 /**
  * Клик по кнопке купить в окне подробного осмотра
@@ -181,13 +181,18 @@ eventEmitter.on('basket_counter', () => {
 });
 
 /**
- * Клик по иконке корзины
+ * Рендер окна корзины
  */
-export function update_basket() {
+export function update_basket(id?: string) {
+  if (id) {
+    const product = basket.getProductById(id);
+    if (product)
+      // Удаляем
+      basket.deleteProduct(product);
+  }
   const allProduct = basket.getAllProduct();
   if (allProduct.length > 0) {
-    eventEmitter.emit(
-      'basket_render',
+    modal_content_render(
       basketModal.render({
         list: allProduct.map(({ title, price, id }, index) => {
           // Темп карточки корзины
@@ -206,8 +211,7 @@ export function update_basket() {
       })
     );
   } else {
-    eventEmitter.emit(
-      'basket_render',
+    modal_content_render(
       basketModal.render({
         priceCounter: '0 синапсов',
         buttonStatus: true,
@@ -217,25 +221,9 @@ export function update_basket() {
   }
 }
 
-eventEmitter.on('basket_render', (data: HTMLElement) => {
-  // ПЕредаем  в рендер модалного окна
-  eventEmitter.emit('modal_content_render', data);
-});
-
-eventEmitter.on('card_delete_basket', (data: { id: string }) => {
-  // Поиск по id в корзие
-  const product = basket.getProductById(data.id);
-  if (product)
-    // Удаляем
-    basket.deleteProduct(product);
-
-  /** Обновить корзину*/
-  update_basket();
-});
-
 /** Клк по кнопке оформления заказа */
 eventEmitter.on('click_basket_buy', () => {
-  eventEmitter.emit('modal_content_render', order.render());
+  modal_content_render(order.render());
 });
 
 /**
@@ -276,7 +264,7 @@ eventEmitter.on(
  * Клик по кнопке далее формы-ордер
  */
 eventEmitter.on('click_button_order', () => {
-  eventEmitter.emit('modal_content_render', contacts.render());
+  modal_content_render(contacts.render());
 });
 
 /**
@@ -320,23 +308,15 @@ eventEmitter.on('click_button_contacts', () => {
     .sendOrder({ ...buyerInfo, items, total })
     .then((result) => {
       // Передаем в отображении модального окна рендер success
-      eventEmitter.emit(
-        'modal_content_render',
+      modal_content_render(
         success.render({ price: `Списано ${result.total} синапсов` })
       );
+      basket.clear();
+      buyer.clearBuyerData();
     })
     .catch((error) => {
       console.error('Ошибка при отправке запроса', error);
     });
-});
-
-/**
- * Передаем рендер окна успешной оплаты в модальное окно
- */
-eventEmitter.on('success_update', (data) => {
-  eventEmitter.emit('modal_content_render', data);
-  basket.clear();
-  buyer.clearBuyerData();
 });
 
 /**
